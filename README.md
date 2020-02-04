@@ -26,7 +26,7 @@ const range = util.range(1, 10)
 All date / time functions use `moment` (MomentJS, the de-factor standard library for date/time) to provide the 
 functionality.
 
-**`formatDate(date, format)`**
+#### `formatDate(date, format)`
 Converts a `Date` object or `moment` object into a string for quick display of dates **without** a time component.
 The default format is `YYYY-MM-DD`.
 
@@ -47,7 +47,7 @@ const reactComponent = props => (
 )
 ```
 
-**`formatDateTime(dateTime)`**
+#### `formatDateTime(dateTime)`
 Converts a `Date` object or `moment` object into a string for quick display of dates **with** a time component. If you
 require a custom format, you can simply use `formatDate(new Date(), "YY-MM-DD hh:mm:ss)`. The default format is
 `DD/MM/YY hh:mm`
@@ -66,7 +66,7 @@ const reactComponent = props => (
 )
 ```
 
-**`applyTimeZoneOffset(timestamp, serverOffsetMin)`**
+#### `applyTimeZoneOffset(timestamp, serverOffsetMin)`
 Used to offset mismatching server/client time zones in regards to timestamps. If your server provides Unix timestamps, 
 but is located in a different timezone, then simply printing out those timestamps (as `moment`/`Date`) will print the
 time in the clients (browser) time zone, not the server time zone. Example: Your server provides timestamps for events 
@@ -95,7 +95,7 @@ offsetClientDate = new Date(util.applyTimeZoneOffset(serverTimestamp, -8 * 60))
 
 ### Numbers
 
-**`range(start, stop, step)`**
+#### `range(start, stop, step)`
 Familiar to Python programmers, this will create a list of sequential numeric values, e.g. `[1, 2, 3, 4, 5]`.
 
 Example:
@@ -108,7 +108,7 @@ range = util.range(5, 1, -1) // will produce [5, 4, 3, 2, 1]
 range = util.range(1, 2, 0.5) // will produce [1, 1.5, 2]
 ```
 
-**`normalise(val, min, max)`**
+#### `normalise(val, min, max)`
 This is basically a percentage function that determines the percentage of `val` in the range of `[min, max]`. This 
 currently only works for `min < max`.
 
@@ -123,7 +123,7 @@ percentage = util.normalise(10, 0, 20)  // return 0.5 or 50%
 
 ### REST
 
-**`getJsonHeader()`**
+#### `getJsonHeader()`
 Small helper to just provide the `Content-Type` and `Accept` header for a `fetch` REST request.
 
 Example:
@@ -138,7 +138,7 @@ fetch("http://myurl.com", {
 })
 ```
 
-**`getAuthHeader(localStorageKey)`**
+#### `getAuthHeader(localStorageKey)`
 Small helper to just provide the `Authorization` header for a `fetch` REST request, if the token is stored in the 
 browser's `localStorage`. This requires you to first save the required `Authorization` header value in the 
 `localStorage`. The default key is "auth_token", but this can be customised for all quick&dirty functions involving 
@@ -157,7 +157,7 @@ fetch("http://myurl.com", {
 })
 ```
 
-**`getAuthJsonHeader(localStorageKey)`**
+#### `getAuthJsonHeader(localStorageKey)`
 Combines the capabilities of `getJsonHeader()` and `getAuthHeader(localStorageKey)`. If no `localStorageKey` is 
 provided, the default (`auth_token`) will be used. This function is the default for a REST interface where the server
 requires authentication.
@@ -175,7 +175,7 @@ fetch("http://myurl.com", {
 })
 
 ```
-**`restHandler(response)`**
+#### `restHandler(response)`
 By default `fetch` doesn't `reject` its promise, if the server responds with a status code >= 400 (e.g. 404, 500). This
 little helper can be used to process the result of the initial fetch promise to parse and resolve the response body to 
 JSON, if the request was successful. If the request caused a status code >= 400, the promise will be rejected with  the
@@ -200,7 +200,7 @@ fetch("http://myurl.com", {
 
 #### Login
 
-**`setAuthToken(token, localStorageKey)`**
+#### `setAuthToken(token, localStorageKey)`
 Simple access wrapper for the browser's `localStorage` to store a login token. To be used by `getAuthJsonHeader()` and 
 `getAuthHeader()`. The `localStorage` key can be overridden. Default is `auth_token`.
 
@@ -221,7 +221,7 @@ fetch("http://myurl.com/login", {
     })
  ```
 
-**`logout(localStorageKey)`**
+#### `logout(localStorageKey)`
 Counterpart to `setAuthToken(token, localStorageKey)`. This one deletes the key from the browser's `localStorage`. 
 
 Example:
@@ -241,13 +241,13 @@ fetch("http://myurl.com/logout", {
 
 ### Constants
 
-**`DATE_FORMAT`**
+#### `DATE_FORMAT`
 A simple string used as the default date format: `YYYY-MM-DD`
 
-**`DATE_TIME_FORMAT`**
+#### `DATE_TIME_FORMAT`
 A simple string used as the default date/time format: `DD/MM/YY hh:mm`
 
-**`actionTypeSuffixes`**
+#### `actionTypeSuffixes`
 This are suffixes used by `redux` for events regarding REST requests. If you use any request-promise middleware for 
 Redux, this will be useful. Using these helpers will avoid typos and thus improve your code quality.
 
