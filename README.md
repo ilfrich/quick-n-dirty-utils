@@ -36,7 +36,7 @@ The default format is `YYYY-MM-DD`.
 
 Example:
 
-```javascript
+```jsx harmony
 import React from "react"
 import util from "quick-n-dirty-utils"
 
@@ -58,7 +58,7 @@ require a custom format, you can simply use `formatDate(new Date(), "YY-MM-DD hh
 
 Example:
 
-```javascript
+```jsx harmony
 import React from "react"
 import util from "quick-n-dirty-utils"
 
