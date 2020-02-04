@@ -189,7 +189,7 @@ import util from "quick-n-dirty-utils"
 fetch("http://myurl.com", {
     headers: util.getAuthJsonHeader(),
 })
-    .then(util.restHandler)
+    .then(util.restHandler)  // here we provide the handler as lambda for the response
     .then(jsonPayload => {
         // do something with the parsed JSON
     })
@@ -199,6 +199,13 @@ fetch("http://myurl.com", {
  ```
 
 #### Login
+
+The login functions (including `getAuthJsonHeader()` and `getAuthHeader()`) assume that you use the browser's 
+`localStorage` (a permanent storage in the browser per URL) to store the full header value for the `Authorization` 
+header and of course that the server is using the `Authorization` header (vs. for example a cookie). So, if your auth
+headers look like this: `Authorization: Basic x9fah736mad`, you would store `Basic x9fah736mad` in the `localStorage`.
+
+The default `localStorage` key used is `auth_token`, but this can be overridden in every function using the storage.  
 
 #### `setAuthToken(token, localStorageKey)`
 Simple access wrapper for the browser's `localStorage` to store a login token. To be used by `getAuthJsonHeader()` and 
