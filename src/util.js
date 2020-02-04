@@ -8,7 +8,7 @@ import moment from "moment"
 // default date format
 const DATE_FORMAT = "YYYY-MM-DD"
 // default date/time format
-const DATE_TIME_FORMAT = "MM/DD/YY hh:mm"
+const DATE_TIME_FORMAT = "DD/MM/YY hh:mm"
 // localStorage key uses to store the auth token
 const LS_AUTH_KEY = "auth_token"
 
@@ -27,6 +27,15 @@ export default {
     DATE_TIME_FORMAT,
 
     /**
+     * Returns the action.type suffixes for the promise redux middleware (used in the reducers)
+     */
+    actionTypeSuffixes: {
+        pending: "_PENDING",
+        fulfilled: "_FULFILLED",
+        rejected: "_REJECTED",
+    },
+
+    /**
      * Uses the hard-coded date format to format the provided date. If no valid date is provided, null is returned.
      * @param {(object|string)} date: the date to format, provided either as string or moment object. If a string is
      * provided, that string needs to be parsable by moment
@@ -37,18 +46,20 @@ export default {
     formatDate(date, dateFormat = DATE_FORMAT) {
         const d = moment(date)
         if (d.isValid()) {
-            return moment(date).format(dateFormat)
+            return d.format(dateFormat)
         }
         return null
     },
 
     /**
-     * Returns the action.type suffixes for the promise redux middleware (used in the reducers)
+     * Uses a hard-coded date/time format to format the provided date. If no valid date is provided, null is returned.
+     * @param {(object|string)} date: the date to format, provided either as string or moment object. If a string is
+     * provided, that string needs to be parsable by moment
+     * @returns {String} the formatted string or null, if the provided date string or object is not valid or cannot be
+     * parsed.
      */
-    actionTypeSuffixes: {
-        pending: "_PENDING",
-        fulfilled: "_FULFILLED",
-        rejected: "_REJECTED",
+    formatDateTime(date) {
+        return this.formatDate(date, DATE_TIME_FORMAT)
     },
 
     /**
@@ -139,7 +150,10 @@ export default {
     restHandler(response) {
         return new Promise((resolve, reject) => {
             if (response.status >= 400) {
-                reject(new Error(response.text))
+                reject({
+                    status: response.status,
+                    message: response.text(),
+                })
                 return
             }
             resolve(response.json())
