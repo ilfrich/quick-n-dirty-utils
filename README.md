@@ -2,6 +2,10 @@
 
 Little useful nuggets for accelerated web development.
 
+```bash
+npm install --save quick-n-dirty-utils 
+```
+
 **Table of Contents**
 
 1. [Functions](#functions)
