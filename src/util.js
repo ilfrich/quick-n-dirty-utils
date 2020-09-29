@@ -98,7 +98,7 @@ export default {
     getJsonHeader() {
         return {
             "Content-Type": "application/json",
-            "Accept": "application/json",
+            Accept: "application/json",
         }
     },
 
@@ -122,7 +122,7 @@ export default {
     setAuthToken(token, localStorageKey = LS_AUTH_KEY) {
         localStorage.setItem(localStorageKey, token)
     },
-    
+
     logout(localStorageKey = LS_AUTH_KEY) {
         localStorage.removeItem(localStorageKey)
     },
@@ -193,14 +193,26 @@ export default {
             return result
         }
         // define compare function for loop
-        let compareFunction = x => x <= stop;
+        let compareFunction = x => x <= stop
         if (step < 0) {
-            compareFunction = x => x >= stop;
+            compareFunction = x => x >= stop
         }
         // fill array
         for (let i = start; compareFunction(i); i += step) {
             result.push(i)
         }
         return result
-    }
+    },
+
+    copyToClipboard(text) {
+        if (document != null) {
+            // copy string
+            const el = document.createElement("textarea")
+            el.value = text
+            document.body.appendChild(el)
+            el.select()
+            document.execCommand("copy")
+            document.body.removeChild(el)
+        }
+    },
 }

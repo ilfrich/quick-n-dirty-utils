@@ -7,11 +7,9 @@
   },
   "extends": [
     "airbnb",
-    "prettier",
-    "prettier/react"
+    "prettier"
   ],
   "plugins": [
-    "react",
     "import",
     "prettier"
   ],
@@ -26,6 +24,7 @@
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
     "no-duplicate-imports": 0,
     "handle-callback-err": "error",
+    "prefer-promise-reject-errors": "off",
     "valid-jsdoc": [
       "error",
       {
