@@ -215,4 +215,32 @@ export default {
             document.body.removeChild(el)
         }
     },
+
+    getTricolor(
+        percent,
+        colors = [
+            [248, 105, 107], // red
+            [255, 255, 255], // white
+            [90, 138, 198], // blue
+        ]
+    ) {
+        const w1 = percent <= 0.5 ? this.normalise(percent, 0, 0.5) : this.normalise(percent, 0.5, 1)
+        const w2 = 1 - w1
+
+        const color1 = percent > 0.5 ? colors[2] : colors[1]
+        const color2 = percent > 0.5 ? colors[1] : colors[0]
+
+        const rgb = [
+            Math.round(color1[0] * w1 + color2[0] * w2),
+            Math.round(color1[1] * w1 + color2[1] * w2),
+            Math.round(color1[2] * w1 + color2[2] * w2),
+        ]
+        return `rgb(${rgb.join(",")})`
+    },
+
+    redGreenTricolor: [
+        [180, 30, 30], // red
+        [160, 160, 70], // yellow
+        [30, 180, 30], // green
+    ],
 }

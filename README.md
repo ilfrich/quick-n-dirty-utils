@@ -14,6 +14,7 @@ npm install --save quick-n-dirty-utils
     3. [REST](#rest)
     4. [Login](#login)
     5. [Constants](#constants)
+    6. [Colors](#colors)
 
 ## Functions
 
@@ -307,3 +308,35 @@ const MyReducer = (state = initialState, action) => {
 
 If you dispatch `reduxAction()`, it will emit 2 actions: one with suffix `_pending` as soon as fetch has called the URL.
 And then when the response of that request comes in either `_rejected` or `_fulfilled`.
+
+### Colors
+
+Some smaller helpers for handling colour gradients.
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+util.getTricolor(0.5)  // returns white
+util.getTricolor(0.7)  // returns pale blue
+util.getTricolor(0.9, util.redGreenTricolor)  // returns almost saturated green
+```
+
+#### `getTriColor(percent, colors)`
+
+Returns an `rgb(r, g, b)` value of the given percent value (expressed as `float` between `0.0` and `1.0`) on a tri-color
+ spectrum (e.g. red -> yellow -> green or blue -> white -> red).
+ 
+The colors are defaulted to blue (1.0) -> white (0.5) -> red (0.0) and are provided as array of RGB arrays:
+
+```json
+[
+    [248, 105, 107], // red
+    [255, 255, 255], // white
+    [90, 138, 198], // blue
+]
+```
+
+#### `redGreenTricolor`
+
+Static field providing a `colors` setting for the `getTriColor(..)` function for red -> yellow -> green.
+ 
