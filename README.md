@@ -340,3 +340,19 @@ The colors are defaulted to blue (1.0) -> white (0.5) -> red (0.0) and are provi
 
 Static field providing a `colors` setting for the `getTriColor(..)` function for red -> yellow -> green.
  
+
+#### `exportToJson(objectData, filename)`
+
+Quickly download any JSON object as a JSON file. This only works in the browser and will
+ internally create a `Blob` from the provided `objectData` (which has to be a valid JSON object
+ or Array of JSON objects). It then creates a temporary hyperlink, which will trigger the download
+ of a file with the given `filename` (defaults to `export.json`). The hyperlink is cleaned up
+ after the download is triggered.
+
+#### `toggleItem(list, item)`
+
+This function is useful for React state updates of lists where you want to add/remove an item
+ depending on whether the `item` is already in the `list`. Only primitive entries (strings,
+ numbers) are supported. The function will return the updated list, with either the `item`
+ added, if it didn't exist in it before or removed, if it did. Removal will also modify the 
+ original list (using the splice operation).
