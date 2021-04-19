@@ -218,11 +218,7 @@ export default {
 
     getTricolor(
         percent,
-        colors = [
-            [248, 105, 107], // red
-            [255, 255, 255], // white
-            [90, 138, 198], // blue
-        ]
+        colors = this.redBlueTricolor
     ) {
         const w1 = percent <= 0.5 ? this.normalise(percent, 0, 0.5) : this.normalise(percent, 0.5, 1)
         const w2 = 1 - w1
@@ -237,6 +233,12 @@ export default {
         ]
         return `rgb(${rgb.join(",")})`
     },
+
+    redBlueTricolor: [
+        [248, 105, 107], // red
+        [255, 255, 255], // white
+        [90, 138, 198], // blue
+    ],
 
     redGreenTricolor: [
         [180, 30, 30], // red
