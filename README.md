@@ -15,6 +15,7 @@ npm install --save quick-n-dirty-utils
     4. [Login](#login)
     5. [Constants](#constants)
     6. [Colors](#colors)
+    7. [Others](#others)
 
 ## Functions
 
@@ -339,7 +340,8 @@ The colors are defaulted to blue (1.0) -> white (0.5) -> red (0.0) and are provi
 #### `redGreenTricolor`
 
 Static field providing a `colors` setting for the `getTriColor(..)` function for red -> yellow -> green.
- 
+
+### Others
 
 #### `exportToJson(objectData, filename)`
 
@@ -348,6 +350,12 @@ Quickly download any JSON object as a JSON file. This only works in the browser 
  or Array of JSON objects). It then creates a temporary hyperlink, which will trigger the download
  of a file with the given `filename` (defaults to `export.json`). The hyperlink is cleaned up
  after the download is triggered.
+
+#### `downloadFile(stringContent, contentType, fileName)`
+
+Downloads any string as file of the given content type. This only works in the browser and will
+ internally create a `Blob` from the provided `stringContent` and creates a temporary hyperlink, 
+ which will trigger the download of the file. The `fileName` and `contentType` should be compatible.
 
 #### `toggleItem(list, item)`
 

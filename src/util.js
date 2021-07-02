@@ -246,20 +246,24 @@ export default {
         [30, 180, 30], // green
     ],
 
-    exportToJson(objectData = {}, filename = "export.json") {
-        const contentType = "application/json;charset=utf-8;"
+    downloadFile(stringContent, contentType, filename) {
         if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            const blob = new Blob([decodeURIComponent(encodeURI(JSON.stringify(objectData)))], { type: contentType })
+            const blob = new Blob([decodeURIComponent(encodeURI(stringContent))], { type: contentType })
             navigator.msSaveOrOpenBlob(blob, filename)
         } else {
             const a = document.createElement("a")
             a.download = filename
-            a.href = `data:${contentType},${encodeURIComponent(JSON.stringify(objectData))}`
+            a.href = `data:${contentType},${encodeURIComponent(stringContent)}`
             a.target = "_blank"
             document.body.appendChild(a)
             a.click()
             document.body.removeChild(a)
         }
+    },
+
+    exportToJson(objectData = {}, filename = "export.json") {
+        const contentType = "application/json;charset=utf-8;"
+        this.downloadFile(JSON.stringify(objectData), contentType, filename)
     },
 
     toggleItem(list, item) {
