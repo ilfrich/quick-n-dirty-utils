@@ -12,6 +12,11 @@ const DATE_TIME_FORMAT = "DD/MM/YY hh:mm"
 // localStorage key uses to store the auth token
 const LS_AUTH_KEY = "auth_token"
 
+const SORT_DIRECTIONS = {
+    ASC: "asc",
+    DESC: "desc",
+}
+
 /**
  * Utilities used across components
  */
@@ -216,10 +221,7 @@ export default {
         }
     },
 
-    getTricolor(
-        percent,
-        colors = this.redBlueTricolor
-    ) {
+    getTricolor(percent, colors = this.redBlueTricolor) {
         const w1 = percent <= 0.5 ? this.normalise(percent, 0, 0.5) : this.normalise(percent, 0.5, 1)
         const w2 = 1 - w1
 
@@ -274,5 +276,107 @@ export default {
         }
         list.splice(index, 1)
         return list
-    }
+    },
+
+    /**
+     * Helper to initialise a sorting definition for a React component state.
+     * @param {string} sortKey - the key / field to sort by default - default "date"
+     * @param {string} defaultDirection - the default sort direction - default: "asc"
+     * @returns {Object} a JSON object representing a sorting definition
+     */
+    initSorting(sortKey, defaultDirection = null) {
+        if (sortKey == null) {
+            return this.initSorting("date", defaultDirection)
+        }
+        if (defaultDirection == null) {
+            return this.initSorting(sortKey, SORT_DIRECTIONS.ASC)
+        }
+        return {
+            key: sortKey,
+            direction: defaultDirection,
+        }
+    },
+
+    /**
+     * State update handler when changing the sorting of a list in a React component.
+     * @param {Object} oldState - the old React component state
+     * @param {string} sortKey - the field / key to sort elements by
+     * @param {string} stateKey - optional, the key in the state holding the sorting object (key and direction) - default "sorting"
+     * @param {string} defaultDirection - optional, the default sort direction, if the sortKey is not the current sort key - default "asc"
+     * @returns {Object} a JSON copy of the old state with the new updated sorting definition
+     */
+    updateSorting(oldState, sortKey, stateKey = null, defaultDirection = null) {
+        if (stateKey == null) {
+            return this.updateSorting(oldState, sortKey, "sorting", defaultDirection)
+        }
+        if (defaultDirection == null) {
+            return this.updateSorting(oldState, sortKey, stateKey, SORT_DIRECTIONS.ASC)
+        }
+        const stateUpdate = { ...oldState }
+        const existingSorting = oldState[stateKey]
+        if (existingSorting == null) {
+            // initialise the sorting
+            stateUpdate[stateKey] = self.initSorting(sortKey, defaultDirection)
+        } else if (existingSorting.key === sortKey) {
+            // reverse direction
+            existingSorting.direction =
+                existingSorting.direction === SORT_DIRECTIONS.ASC ? SORT_DIRECTIONS.DESC : SORT_DIRECTIONS.ASC
+        } else {
+            // set new sort key and default direction
+            existingSorting.key = sortKey
+            existingSorting.direction = defaultDirection
+        }
+
+        return stateUpdate
+    },
+
+    /**
+     * Provides a sort function for the given key / direction.
+     * @param {Object} sorting a sorting definition containing "key" and "direction"
+     * @param {Array.<string>} stringKeys the list of sort keys that should be sorted as strings
+     * @param {Array.<string>} booleanKeys the list of sort keys that should be sorted as boolean (true first = asc)
+     * @returns {Function} a sorting lambda
+     */
+    sort(sorting, stringKeys = [], booleanKeys = []) {
+        const { key, direction } = sorting
+        return (a, b) => {
+            // extract values
+            let aVal = a
+            let bVal = b
+            if (key.includes(".")) {
+                key.split(".").forEach(subKey => {
+                    if (aVal != null) {
+                        aVal = aVal[subKey]
+                    }
+                    if (bVal != null) {
+                        bVal = bVal[subKey]
+                    }
+                })
+            } else {
+                aVal = aVal[key]
+                bVal = bVal[key]
+            }
+
+            if (stringKeys.includes(key)) {
+                // perform string search
+                if (direction === SORT_DIRECTIONS.ASC) {
+                    return aVal.localeCompare(bVal)
+                }
+                return bVal.localeCompare(aVal)
+            }
+
+            if (booleanKeys.includes(key)) {
+                if (direction === SORT_DIRECTIONS.ASC) {
+                    return aVal ? -1 : 1
+                }
+                return aVal ? 1 : -1
+            }
+
+            // numeric search
+            if (direction === SORT_DIRECTIONS.ASC) {
+                return aVal - bVal
+            }
+            return bVal - aVal
+        }
+    },
 }

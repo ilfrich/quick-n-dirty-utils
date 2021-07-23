@@ -15,7 +15,9 @@ npm install --save quick-n-dirty-utils
     4. [Login](#login)
     5. [Constants](#constants)
     6. [Colors](#colors)
-    7. [Others](#others)
+    7. [Sorting](#sorting)
+    8. [Others](#others)
+
 
 ## Functions
 
@@ -340,6 +342,100 @@ The colors are defaulted to blue (1.0) -> white (0.5) -> red (0.0) and are provi
 #### `redGreenTricolor`
 
 Static field providing a `colors` setting for the `getTriColor(..)` function for red -> yellow -> green.
+
+### Sorting
+
+This library introduces a way to sort lists. It has capabilties to sort in ascending or descending order
+ and supports lists of JSON objects with string, numeric or boolean values to sort by.
+
+The basic sorting definition is a JSON object containing `key` and `direction` (one of `asc` or `desc`):
+
+```json
+{
+    "key": "date",
+    "direction": "desc", 
+}
+```
+ 
+It has good support for React component states and provides the following functions:
+
+#### `initSorting(sortKey, defaultDirection = null)`
+
+This will simply return a sorting object, which can be used by React as an initial component state.
+ If the `defaultDirection` is not provided, `asc` will be used.
+
+#### `updateSorting(oldState, sortKey, stateKey = null, defaultDirection = null)`
+
+Updates a React component state's sorting definition. If the current `sortKey` is already selected, the
+ sort `direction` will be inversed.
+
+**Parameter**
+
+- `oldState` - the React component's old state (from `this.setState(oldState => ({ ... }))`)
+- `sortKey` - the key that has been selected by the user to sort by
+- `stateKey` - by default this will be `"sorting"`, which defines the key in `oldState` that contains
+ the current sorting definition (using `key` and `direction` properties)
+- `defaultDirection` - defaults to `"asc"`, if not provided - if the `sortKey` is not already selected,
+ this will determine the initial sort direction.
+
+**Usage**
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+...
+// initial state
+this.state = {
+    // this would set the sorting to "name" in ascending order in the constructor of the component
+    sorting: {
+        key: "name",
+        direction: "asc",
+    }
+}
+...
+// change sorting to key "date" in descending order
+this.setState(oldState => util.updateSorting(oldState, "date", null, "desc"))
+```
+
+#### `sort(sorting, stringKeys = [], booleanKeys = [])`
+
+Helper function that returns an `(a, b) => ...` lambda that can be used to sort a list given a sorting
+ definition and some information about which keys are strings and which ones are booleans.
+
+**Parameter**
+
+- `sorting` - the current sorting definition, a JSON object with `key` and `direction` properties.
+- `stringKeys` - a list of JSON keys of the list items to be sorted that are strings (using `.localeCompare` to sort)
+- `booleanKeys` - a list of JSON keys of the list items to be sorted as booleans (first true, then false in ascending order)
+
+**Usage**
+
+```javascript
+import util from "quick-n-dirty-utils"
+...
+// initial state, set in the constructor of the react component
+this.state = {
+    sorting: {
+        key: "name",
+        direction: "asc",
+    },
+}
+...
+const items = [
+    { name: "Peter", level: 5, isAdmin: true, department: "IT" },
+    { name: "Janine", level: 4, isAdmin: false, department: "IT" },
+    { name: "Paul", level: 3, isAdmin: false, department: "HR" },
+]
+...
+// in the render function of a react component:
+...
+<div>
+    {items.sort(util.sort(this.state.sorting, ["name", "department"], ["isAdmin"])).map(item => (
+        <div key={item.name}>{item.name} ({item.level}) - {item.department} {item.isAdmin ? "ADMIN" : ""}</div>
+    ))}
+</div>
+...
+```
 
 ### Others
 
