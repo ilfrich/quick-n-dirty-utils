@@ -379,4 +379,12 @@ export default {
             return bVal - aVal
         }
     },
+
+    /**
+     * Sums up all the values in the provided list 
+     * @param {Array} list 
+     */
+    sum(list) {
+        return list.reduce((a, b) => a + b, 0)
+    },
 }
