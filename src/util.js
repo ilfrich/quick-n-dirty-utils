@@ -381,10 +381,20 @@ export default {
     },
 
     /**
-     * Sums up all the values in the provided list 
-     * @param {Array} list 
+     * Sums up all the values in the provided list
+     * @param {Array} list
      */
     sum(list) {
         return list.reduce((a, b) => a + b, 0)
+    },
+
+    getQueryStringParams(query) {
+        return query
+            ? (/^[?#]/.test(query) ? query.slice(1) : query).split("&").reduce((params, param) => {
+                  const [key, value] = param.split("=")
+                  params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : ""
+                  return params
+              }, {})
+            : {}
     },
 }
