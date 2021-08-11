@@ -129,6 +129,18 @@ let percentage = util.normalise(3, 0, 20)  // returns 0.15 or 15%
 percentage = util.normalise(10, 0, 20)  // return 0.5 or 50%
 ```
 
+#### `sum(list)`
+This is just a short hand for summing up numeric values in an array.
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const list = [5, 3.5, 10]
+sum = util.sum(list)  // returns 18.5
+```
+
 ### REST
 
 #### `getJsonHeader()`
@@ -460,3 +472,18 @@ This function is useful for React state updates of lists where you want to add/r
  numbers) are supported. The function will return the updated list, with either the `item`
  added, if it didn't exist in it before or removed, if it did. Removal will also modify the 
  original list (using the splice operation).
+
+#### `getQueryStringParams(query)`
+
+This function will extract a URL query part (the part after the `?`) and extract a JSON object
+ with all key/value pairs being present. Note that all values will be strings, even if they represent
+ numbers (you have to parse them on your end if necessary).
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const queryString = "?id=abc&page=5"
+const query = util.getQueryStringParams(queryString)  // returns { id: "abc", page: "5" }
+```
