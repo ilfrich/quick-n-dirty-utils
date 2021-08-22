@@ -487,3 +487,43 @@ import util from "quick-n-dirty-utils"
 const queryString = "?id=abc&page=5"
 const query = util.getQueryStringParams(queryString)  // returns { id: "abc", page: "5" }
 ```
+
+#### `reverseMapping(jsonObject, showWarning = true)`
+
+This functions creates a reverse mapping for a flat JSON object mapping from keys to simple values.
+ The values can be boolean, numbers or strings.
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const MAPPINMG = {
+    key: "value1",
+    foo: "bar",
+}
+
+const reverse = util.reverseMapping(MAPPING)
+console.log(reverse.value1)  // will show "key"
+console.log(reverse.bar) // will show "foo"
+```
+
+#### `keyLookup(jsonMapping, lookupValue, showWarning = true)`
+
+This function will first call `reverseMapping` on the input JSON object and then try to find the 
+ `lookupValue` in that reversed mapping. This is useful for mappings from technical identifiers 
+ to labels. This is useful to avoid refactoring issues, when we would use the key of a JSON object
+ as string. 
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const MAPPING = {
+    INVEST: "Investment and Portfolio",
+    INVOICE: "Invoices and Receipts",
+}
+
+const DEFAULT_VIEW = util.keyLookup(MAPPING, MAPPING.INVOICE) // this will be "INVOICE"
+```

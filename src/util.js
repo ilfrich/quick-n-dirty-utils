@@ -20,7 +20,7 @@ const SORT_DIRECTIONS = {
 /**
  * Utilities used across components
  */
-export default {
+const util = {
     /**
      * Default date format for quick display
      */
@@ -388,6 +388,11 @@ export default {
         return list.reduce((a, b) => a + b, 0)
     },
 
+    /**
+     * Extracts the query parameter of an URL query string and returns them as JSON object.
+     * @param {string} query - the query string starting with ?, like ?foo=bar&abc=def
+     * @returns {object} a JSON object with the key/value paris of the query string.
+     */
     getQueryStringParams(query) {
         return query
             ? (/^[?#]/.test(query) ? query.slice(1) : query).split("&").reduce((params, param) => {
@@ -397,4 +402,49 @@ export default {
               }, {})
             : {}
     },
+
+    /**
+     * Returns an inversed JSON object, where every value becomes the key and maps to its original key.
+     * @param {object} jsonObject - a flat JSON object, with simple keys and simple values (boolean, 
+     * string, number are supported)
+     * @param {boolean} showWarning - optional flag to print out console warnings in case any key/value 
+     * pair cannot be mapped or if the JSON object contains duplicates - default = true
+     * @returns {object} a JSON object which maps from each value of the input to the key.
+     */
+    reverseMapping(jsonObject, showWarning = true) {
+        const result = {}
+        Object.entries(jsonObject).forEach(([key, value]) => {
+            if (!["number", "boolean", "string"].includes(typeof value) && showWarning) {
+                console.warn("Reverse mapping of value of type", typeof value, "is not possible. Ignoring this value")
+                return
+            }
+            const newKey = `${value}`  // stringify
+            if (result[newKey] != null) {
+                // already set
+                console.warn("Duplicate value", newKey, "in reverse mapping. Ignoring key", key)
+                return
+            }
+            result[newKey] = key
+        })
+        return result
+    },
+
+    /**
+     * Useful function for listings / mappings, which allows to use auto-complete / refactoring techniques
+     * to lookup the key from its value in that mapping. If a mapping MAP = { "foo": "bar" }, then you can
+     * use `keyLookup(MAP, MAP.foo)` to return "foo", without using "foo" as a string, which can introduce
+     * difficulties when refactoring.
+     * @param {object} jsonMapping - a flag JSON object mapping from keys to simple values (string, boolean,
+     * number are supported)
+     * @param {string|number|boolean} lookupValue - the value to find the key for
+     * @param {boolean} showWarning - optional flag, which is passed into the reverseMapping function to print
+     * out warnings in case of issues when creating the reverse mapping.
+     * @returns {string} the name of the key for the lookup value
+     */
+    keyLookup(jsonMapping, lookupValue, showWarning = true) {
+        const reverse = this.reverseMapping(jsonMapping, showWarning)
+        return reverse[lookupValue]
+    },
 }
+
+export default util
