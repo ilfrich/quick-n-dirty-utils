@@ -527,3 +527,85 @@ const MAPPING = {
 
 const DEFAULT_VIEW = util.keyLookup(MAPPING, MAPPING.INVOICE) // this will be "INVOICE"
 ```
+
+#### `jsonGet(object, key)`
+
+This simple function has the purpose to access nested JSON objects without 
+ having to manually check for null at each step.
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const myObject = {
+    foo: {
+        bar: {
+            test: 1,
+        },
+    },
+}
+
+util.jsonGet(myObject, "foo")  // will return { bar: { test: 1 } }
+util.jsonGet(myObject, "foo.bar.test") // will return 1
+util.jsonGet(myObject, "foo.test.bar")  // will return null
+```
+
+#### `mapListToKeyObject(list, keyOrFunction)`
+
+This function allows to map a list of uniform items to a flat JSON object,
+ where each object will be stored under a key which is determined from the
+ object by accessing a string key or executing a function on that item.
+
+The result will be a JSON object. Underneath each key, it will store 
+ either a single item extracted using the key or function passed or a list
+ of item, if multiple items map to the same key.
+
+Example:
+
+```javascript
+import util from "quick-n-dirty-utils"
+
+const myList = [
+    { _id: "a", name: "foo", level: 1, order: 1 },
+    { _id: "b", name: "bar", level: 2, order: 2 },
+    { _id: "c", name: "test", level: 1, order: 3 },
+]
+
+// using a unique key
+const result1 = util.mapListToKeyObject(myList, "_id")
+/*
+ * will return:
+ * {
+ *   "a": { _id: "a", name: "foo", level: 1, order: 1 },
+ *   "b": { _id: "b", name: "bar", level: 2, order: 2 },
+ *   "c": { _id: "c", name: "test", level: 1, order: 3 },
+ * }
+ */
+
+// using a key that has duplicates
+const result2 = util.mapListToKeyObject(myList, "level")
+/*
+ * will return:
+ * {
+ *   1: [
+ *     { _id: "a", name: "foo", level: 1, order: 1 },
+ *     { _id: "c", name: "test", level: 1, order: 3 },
+ *   ],
+ *   2: { _id: "b", name: "bar", level: 2, order: 2 },
+ * }
+ */
+
+// using a lambda
+const result3 = util.mapListToKeyObject(myList, item => item[level] + item[order])
+/*
+ * will return:
+ * {
+ *   2: { _id: "a", name: "foo", level: 1, order: 1 },
+ *   4: [
+ *     { _id: "b", name: "bar", level: 2, order: 2 },
+ *     { _id: "c", name: "test", level: 1, order: 3 },
+ *   ],   
+ * }
+ */
+```

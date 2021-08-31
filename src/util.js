@@ -445,6 +445,74 @@ const util = {
         const reverse = this.reverseMapping(jsonMapping, showWarning)
         return reverse[lookupValue]
     },
+
+    /**
+     * A function to savely access nested JSON keys in objects. This will handle deeper levels and especially
+     * if keys higher up in the hierarchy are not set.
+     * @param {Object} object - a JSON object
+     * @param {key} key - a string that can include dots (.) for nested JSON keys
+     * @returns {Object} null if the key does not exist in the object or the resolved value
+     */
+    jsonGet(object, key) {
+        if (object == null) {
+            return null
+        }
+
+        if (!key.includes(".")) {
+            // simply return the value
+            return object[key]
+        }
+
+        // split the key and initialise current object
+        let current = object
+        const keys = key.split(".")
+        // iterate through keys navigating through
+        keys.forEach(k => {
+            if (current == null) {
+                return
+            }
+            return current[k]
+        })
+
+        // return the final value after iterating through all keys
+        return current
+    },
+
+    /**
+     * A function that will map a list of items to a JSON object which contains keys extracted from each item 
+     * and the value is the object from that list with that key. If multiple values map to the same keys an array
+     * of objects will be mapped to that key.
+     * @param {Array} list - a list of items
+     * @param {string|function} - a string key (can contain . for nested levels) or a lambda that does the extraction
+     * for each item.
+     */
+    mapListToKeyObject(list, keyOrFunction) {
+        // check if it's a simple key mapping or lambda
+        const lambda = ["number", "string"].includes(typeof keyOrFunction) ? obj => obj[keyOrFunction] : keyOrFunction
+        
+        const result = {}
+        if (list == null || keyOrFunction == null || list.forEach == null) {
+            return result
+        }
+
+        list.forEach(item => {
+            const key = lambda(item)
+            if (result[key] == null) {
+                // first item for this key
+                result[key] = item
+            } else {
+                // multiple items for the same key (might have to convert to array)
+                if (!Array.isArray(result[key])) {
+                    // not yet an array, convert the old item stored there
+                    result[key] = [result[key]]
+                }
+                // push the new item
+                result[key].push(item)
+            }
+        })
+
+        return result
+    },
 }
 
 export default util
