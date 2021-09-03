@@ -471,7 +471,7 @@ const util = {
             if (current == null) {
                 return
             }
-            return current[k]
+            current = current[k]
         })
 
         // return the final value after iterating through all keys
