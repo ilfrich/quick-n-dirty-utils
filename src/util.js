@@ -382,9 +382,13 @@ const util = {
 
     /**
      * Sums up all the values in the provided list
-     * @param {Array} list
+     * @param {Array} list - a list of numbers
+     * @returns {Number} the sum of all the items in the list or 0 if the list is empty.
      */
     sum(list) {
+        if (list.length === 0) {
+            return 0
+        }
         return list.reduce((a, b) => a + b, 0)
     },
 
@@ -405,9 +409,9 @@ const util = {
 
     /**
      * Returns an inversed JSON object, where every value becomes the key and maps to its original key.
-     * @param {object} jsonObject - a flat JSON object, with simple keys and simple values (boolean, 
+     * @param {object} jsonObject - a flat JSON object, with simple keys and simple values (boolean,
      * string, number are supported)
-     * @param {boolean} showWarning - optional flag to print out console warnings in case any key/value 
+     * @param {boolean} showWarning - optional flag to print out console warnings in case any key/value
      * pair cannot be mapped or if the JSON object contains duplicates - default = true
      * @returns {object} a JSON object which maps from each value of the input to the key.
      */
@@ -418,7 +422,7 @@ const util = {
                 console.warn("Reverse mapping of value of type", typeof value, "is not possible. Ignoring this value")
                 return
             }
-            const newKey = `${value}`  // stringify
+            const newKey = `${value}` // stringify
             if (result[newKey] != null) {
                 // already set
                 console.warn("Duplicate value", newKey, "in reverse mapping. Ignoring key", key)
@@ -479,17 +483,18 @@ const util = {
     },
 
     /**
-     * A function that will map a list of items to a JSON object which contains keys extracted from each item 
+     * A function that will map a list of items to a JSON object which contains keys extracted from each item
      * and the value is the object from that list with that key. If multiple values map to the same keys an array
      * of objects will be mapped to that key.
      * @param {Array} list - a list of items
-     * @param {string|function} - a string key (can contain . for nested levels) or a lambda that does the extraction
-     * for each item.
+     * @param {string|function} keyOrFunction - a string key (can contain . for nested levels) or a lambda that does
+     * the extraction for each item.
+     * @returns {Object} a json object mapping from key to an item or list of items
      */
     mapListToKeyObject(list, keyOrFunction) {
         // check if it's a simple key mapping or lambda
         const lambda = ["number", "string"].includes(typeof keyOrFunction) ? obj => obj[keyOrFunction] : keyOrFunction
-        
+
         const result = {}
         if (list == null || keyOrFunction == null || list.forEach == null) {
             return result
@@ -512,6 +517,52 @@ const util = {
         })
 
         return result
+    },
+
+    /**
+     * Adds or updates an item in a list of items and returns the updated list. This is useful for React state updates.
+     * @param {Array} list - a list of items
+     * @param {Object} item - a JSON object to be added to the list or updated, if it already exists
+     * @param {string} idKey - the JSON key pointing to the element ID of the item and items in the list
+     * @returns {Array} the updated array with the provided `item` either added or updated.
+     */
+    integrateDbItem: (list, item, idKey = "_id") => {
+        const index = list.map(i => i[idKey]).indexOf(item[idKey])
+        if (index === -1) {
+            list.push(item)
+        } else {
+            list[index] = item
+        }
+        return list
+    },
+
+    /**
+     * Removes an item from a list by referring to the unique item id. This is a simple id filter. Useful for React state updates.
+     * @param {Array} list - a list of items
+     * @param {string} itemId - the id of the item to remove
+     * @param {string} idKey - the JSON key pointing to the element ID of the item and items in the list
+     * @returns {Array} the provided list minus the element with the id provided.
+     */
+    removeDbItem: (list, itemId, idKey = "_id") => {
+        return list.filter(item => item[idKey] !== itemId)
+    },
+
+    /**
+     * Translates a hex colour code into an RGB string. If alpha is provided, it will return an RGBA string. The string can be used in CSS styles
+     * @param {string} hexValue - the hex value of colour; can be provided with or without the # and as 3 or 6 digit color
+     * @param {Number} alpha - optional: if provided an RGBA (transparency) colour will be returned
+     * @returns {string} a colour string usable in colour definitions in CSS
+     */
+    hexToRgb(hexValue, alpha = null) {
+        const hex = hexValue.replace("#", "")
+        const r = parseInt(hex.length === 3 ? hex.slice(0, 1).repeat(2) : hex.slice(0, 2), 16)
+        const g = parseInt(hex.length === 3 ? hex.slice(1, 2).repeat(2) : hex.slice(2, 4), 16)
+        const b = parseInt(hex.length === 3 ? hex.slice(2, 3).repeat(2) : hex.slice(4, 6), 16)
+        if (alpha != null) {
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`
+        }
+
+        return `rgb(${r}, ${g}, ${b})`
     },
 }
 

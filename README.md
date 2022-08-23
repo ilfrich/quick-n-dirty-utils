@@ -218,6 +218,43 @@ fetch("http://myurl.com", {
     })
  ```
 
+
+#### React State Handlers
+
+When a React component uses a state variable to store a list of items any create/update/delete operation
+ will have to modify that state variable. To help integrate new/updated items or remove items, the 
+ following 2 functions are available:
+
+```javascript
+import util from "quick-n-dirty-utils"
+import React from "react"
+
+class MyComp extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { myList: [] }
+    }
+    saveItem(item) {
+        // doesn't matter if add or update
+        this.setState(oldState => ({
+            ...oldState,
+            myList: util.integrateDbItem(oldState.myList, item),
+        }))
+    }
+    deleteItem(itemId) {
+        this.setState(oldState => ({
+            ...oldState,
+            myList: util.removeDbItem(oldState.myList, itemId),
+        }))
+    }
+}
+```
+
+Both functions will use the MongoDB convention and use the JSON key `_id` to match items. You can 
+ override that by providing a 3rd parameter: `util.integrateDbItem(oldState.myList, item, "uid")` 
+ and `util.removeDbItem(oldState.myList, itemId, "uid")` if for example your JSON key holding the
+ unique ID is called `uid`.
+
 #### Login
 
 The login functions (including `getAuthJsonHeader()` and `getAuthHeader()`) assume that you use the browser's 
@@ -354,6 +391,13 @@ The colors are defaulted to blue (1.0) -> white (0.5) -> red (0.0) and are provi
 #### `redGreenTricolor`
 
 Static field providing a `colors` setting for the `getTriColor(..)` function for red -> yellow -> green.
+
+#### `hexToRgb(hexValue, alpha)`
+
+Converts a colour provided as hexadecimal string into an RGB string, like `rgb(255, 255, 255)` that can
+ be used in CSS. It allows an optional `alpha` parameter (default `null`), which will create a string 
+ like `rgba(255, 255, 255, 0.3)` for an `alpha = 0.3`. The `hexValue` can be provided with or without the 
+ `#` prefix.
 
 ### Sorting
 
