@@ -7,8 +7,10 @@ import { DateTime } from "luxon"
 
 // default date format
 const DATE_FORMAT = "yyyy-MM-dd"
+
 // default date/time format
 const DATE_TIME_FORMAT = "dd/MM/yy T"
+
 // localStorage key uses to store the auth token
 const LS_AUTH_KEY = "auth_token"
 
@@ -54,16 +56,16 @@ const qndUtils = {
             return this.formatDate(DateTime.fromJSDate(date))
         }
         // handling unix timestamps (guessing s or ms)
-        if (typeof(date) === "number") {
-            if (date < 5000000000) { 
+        if (typeof date === "number") {
+            if (date < 5000000000) {
                 // otherwise would be year 2128+
                 return this.formatDate(DateTime.fromSeconds(date), dateFormat)
             }
             // doesn't work for dates before 28 Feb 1970
-            return this.formatDate(DateTime.fromMillis(date), dateFormat)            
+            return this.formatDate(DateTime.fromMillis(date), dateFormat)
         }
         // handling string date/times
-        if (typeof(date) === "string") {
+        if (typeof date === "string") {
             // attempt to parse
             const functions = [DateTime.fromISO, DateTime.fromSQL, DateTime.fromRFC2822]
             for (let i = 0; i < functions.length; i += 1) {
@@ -72,13 +74,15 @@ const qndUtils = {
                     return this.formatDate(parsedDate, dateFormat)
                 }
             }
-            throw Error("Provided string date could not be detected, please convert to Luxon DateTime before formatting")
+            throw Error(
+                "Provided string date could not be detected, please convert to Luxon DateTime before formatting"
+            )
         }
         // handling momentjs objects
         if (date._isAMomentObject != null && date.unix != null) {
             return this.formatDate(date.unix(), dateFormat)
-        }        
-        
+        }
+
         if (date.isValid) {
             return date.toFormat(dateFormat)
         }
@@ -87,7 +91,7 @@ const qndUtils = {
 
     /**
      * Uses a hard-coded date/time format to format the provided date. If no valid date is provided, null is returned.
-     * @param {(object|string)} date: the date to format, provided either as string, Number or Luxon object. If a string 
+     * @param {(object|string)} date: the date to format, provided either as string, Number or Luxon object. If a string
      * is provided, that string needs to be parsable by Luxon
      * @param {string} dateTimeFormat - the Luxon datetime format, defaults to dd/MM/yy T
      * @returns {String} the formatted string or null, if the provided date string or object is not valid or cannot be
