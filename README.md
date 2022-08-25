@@ -23,7 +23,7 @@ npm install --save quick-n-dirty-utils
 
 ```javascript
 // import dependency
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 // call a function of it
 const range = util.range(1, 10)
@@ -42,7 +42,7 @@ Example:
 
 ```jsx harmony
 import React from "react"
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const reactComponent = props => (
     <div>
@@ -64,7 +64,7 @@ Example:
 
 ```jsx harmony
 import React from "react"
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const reactComponent = props => (
     <div>
@@ -90,7 +90,7 @@ determined by the browser. Example offsets:
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const serverTimestamp = 1580777394
 
@@ -109,7 +109,7 @@ Familiar to Python programmers, this will create a list of sequential numeric va
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 let range = util.range(1, 5)  // will produce [1, 2, 3, 4, 5]
 range = util.range(5, 1, -1) // will produce [5, 4, 3, 2, 1]
@@ -123,7 +123,7 @@ currently only works for `min < max`.
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 let percentage = util.normalise(3, 0, 20)  // returns 0.15 or 15%
 percentage = util.normalise(10, 0, 20)  // return 0.5 or 50%
@@ -135,7 +135,7 @@ This is just a short hand for summing up numeric values in an array.
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const list = [5, 3.5, 10]
 sum = util.sum(list)  // returns 18.5
@@ -149,7 +149,7 @@ Small helper to just provide the `Content-Type` and `Accept` header for a `fetch
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com", {
     headers: util.getJsonHeader(),
@@ -167,7 +167,7 @@ authentication.
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com", {
     // will use the localStorage.getItem("auth_token") as Authorization header value; provide a custom key if required
@@ -185,7 +185,7 @@ requires authentication.
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com", {
     // will use the localStorage.getItem("my_token") as Authorization header value; provide a custom key if required
@@ -204,7 +204,7 @@ status code and the response body as payload.
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com", {
     headers: util.getAuthJsonHeader(),
@@ -226,7 +226,7 @@ When a React component uses a state variable to store a list of items any create
  following 2 functions are available:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 import React from "react"
 
 class MyComp extends React.Component {
@@ -271,7 +271,7 @@ Simple access wrapper for the browser's `localStorage` to store a login token. T
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com/login", {
     method: "POST",
@@ -291,7 +291,7 @@ Counterpart to `setAuthToken(token, localStorageKey)`. This one deletes the key 
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 fetch("http://myurl.com/logout", {
     method: "POST",
@@ -318,7 +318,7 @@ Redux, this will be useful. Using these helpers will avoid typos and thus improv
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const reduxAction = () => ({
     type: "myAction",
@@ -366,7 +366,7 @@ And then when the response of that request comes in either `_rejected` or `_fulf
 Some smaller helpers for handling colour gradients.
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 util.getTricolor(0.5)  // returns white
 util.getTricolor(0.7)  // returns pale blue
@@ -437,7 +437,7 @@ Updates a React component state's sorting definition. If the current `sortKey` i
 **Usage**
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 ...
 // initial state
@@ -467,7 +467,7 @@ Helper function that returns an `(a, b) => ...` lambda that can be used to sort 
 **Usage**
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 ...
 // initial state, set in the constructor of the react component
 this.state = {
@@ -526,7 +526,7 @@ This function will extract a URL query part (the part after the `?`) and extract
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const queryString = "?id=abc&page=5"
 const query = util.getQueryStringParams(queryString)  // returns { id: "abc", page: "5" }
@@ -540,7 +540,7 @@ This functions creates a reverse mapping for a flat JSON object mapping from key
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const MAPPINMG = {
     key: "value1",
@@ -562,7 +562,7 @@ This function will first call `reverseMapping` on the input JSON object and then
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const MAPPING = {
     INVEST: "Investment and Portfolio",
@@ -580,7 +580,7 @@ This simple function has the purpose to access nested JSON objects without
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const myObject = {
     foo: {
@@ -608,7 +608,7 @@ The result will be a JSON object. Underneath each key, it will store
 Example:
 
 ```javascript
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const myList = [
     { _id: "a", name: "foo", level: 1, order: 1 },
