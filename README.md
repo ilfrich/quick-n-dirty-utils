@@ -31,12 +31,12 @@ const range = util.range(1, 10)
 
 ### Date / Time
 
-All date / time functions use `moment` (MomentJS, the de-factor standard library for date/time) to provide the 
+All date / time functions use `luxon` (Luxon, the de-factor standard library for date/time) to provide the 
 functionality.
 
 #### `formatDate(date, format)`
-Converts a `Date` object or `moment` object into a string for quick display of dates **without** a time component.
-The default format is `YYYY-MM-DD`.
+Converts a `Date` object, Unix timestamp or `luxon.DateTime` object into a string for quick display of dates 
+**without** a time component. The default format is `yyyy-MM-dd`.
 
 Example:
 
@@ -50,15 +50,15 @@ const reactComponent = props => (
         <div>{util.formatDate(new Date())}</div>
         
         {/* prints out a date like 18/02/20 */}
-        <div>{util.formatDate(new Date(), "DD/MM/YY")}</div>
+        <div>{util.formatDate(new Date(), "dd/MM/yy")}</div>
     </div>
 )
 ```
 
-#### `formatDateTime(dateTime)`
-Converts a `Date` object or `moment` object into a string for quick display of dates **with** a time component. If you
-require a custom format, you can simply use `formatDate(new Date(), "YY-MM-DD hh:mm:ss)`. The default format is
-`DD/MM/YY hh:mm`
+#### `formatDateTime(dateTime, format)`
+Converts a `Date` object, Unix timestamp or `luxon.DateTime` object into a string for quick display of dates 
+**with** a time component. If you require a custom format, you can provide this. The default format is
+`dd/MM/yy T` (e.g. 31/12/22 16:43)
 
 Example:
 
@@ -76,8 +76,8 @@ const reactComponent = props => (
 
 #### `applyTimeZoneOffset(timestamp, serverOffsetMin)`
 Used to offset mismatching server/client time zones in regards to timestamps. If your server provides Unix timestamps, 
-but is located in a different timezone, then simply printing out those timestamps (as `moment`/`Date`) will print the
-time in the clients (browser) time zone, not the server time zone. Example: Your server provides timestamps for events 
+but is located in a different timezone, then simply printing out those timestamps (as `luxon.DateTime`/`Date`) will print 
+the time in the clients (browser) time zone, not the server time zone. Example: Your server provides timestamps for events 
 and the event occurred at midnight, but you are located 2 hours behind the server's time zone. If you use that timestamp
 and print out the date (e.g. `util.formatDateTime(new Date(myTimestamp))`), it will show you 10pm, rather than midnight.
 Depending on the application, it might be useful to retain the local time.

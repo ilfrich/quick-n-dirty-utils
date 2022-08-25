@@ -1,6 +1,6 @@
 {
   "name": "quick-n-dirty-utils",
-  "version": "0.0.15",
+  "version": "1.0.0",
   "description": "Little useful nuggets for accelerated web development",
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir ./dist",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/ilfrich/quick-n-dirty-utils#readme",
   "dependencies": {
-    "moment": "^2.24.0"
+    "luxon": "^3.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.2",

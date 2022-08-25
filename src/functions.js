@@ -3,12 +3,12 @@
  *
  *
  */
-import moment from "moment"
+import { DateTime } from "luxon"
 
 // default date format
-const DATE_FORMAT = "YYYY-MM-DD"
+const DATE_FORMAT = "yyyy-MM-dd"
 // default date/time format
-const DATE_TIME_FORMAT = "DD/MM/YY hh:mm"
+const DATE_TIME_FORMAT = "dd/MM/yy T"
 // localStorage key uses to store the auth token
 const LS_AUTH_KEY = "auth_token"
 
@@ -20,7 +20,7 @@ const SORT_DIRECTIONS = {
 /**
  * Utilities used across components
  */
-const util = {
+const qndUtils = {
     /**
      * Default date format for quick display
      */
@@ -42,29 +42,59 @@ const util = {
 
     /**
      * Uses the hard-coded date format to format the provided date. If no valid date is provided, null is returned.
-     * @param {(object|string)} date: the date to format, provided either as string or moment object. If a string is
-     * provided, that string needs to be parsable by moment
-     * @param {string} dateFormat: the date format to be used by moment to serialise the date, default "YY-MM-DD"
+     * @param {(object|string)} date: the date to format, provided either as string or Luxon object. If a string is
+     * provided, that string needs to be parsable by Luxon
+     * @param {string} dateFormat: the date format to be used by Luxon to serialise the date, default "yyyy-MM-dd"
      * @returns {String} the formatted string or null, if the provided date string or object is not valid or cannot be
      * parsed.
      */
     formatDate(date, dateFormat = DATE_FORMAT) {
-        const d = moment(date)
-        if (d.isValid()) {
-            return d.format(dateFormat)
+        // handling JS date objects
+        if (date instanceof Date) {
+            return this.formatDate(DateTime.fromJSDate(date))
+        }
+        // handling unix timestamps (guessing s or ms)
+        if (typeof(date) === "number") {
+            if (date < 5000000000) { 
+                // otherwise would be year 2128+
+                return this.formatDate(DateTime.fromSeconds(date), dateFormat)
+            }
+            // doesn't work for dates before 28 Feb 1970
+            return this.formatDate(DateTime.fromMillis(date), dateFormat)            
+        }
+        // handling string date/times
+        if (typeof(date) === "string") {
+            // attempt to parse
+            const functions = [DateTime.fromISO, DateTime.fromSQL, DateTime.fromRFC2822]
+            for (let i = 0; i < functions.length; i += 1) {
+                const parsedDate = functions[i](date)
+                if (parsedDate.isValid) {
+                    return this.formatDate(parsedDate, dateFormat)
+                }
+            }
+            throw Error("Provided string date could not be detected, please convert to Luxon DateTime before formatting")
+        }
+        // handling momentjs objects
+        if (date._isAMomentObject != null && date.unix != null) {
+            return this.formatDate(date.unix(), dateFormat)
+        }        
+        
+        if (date.isValid) {
+            return date.toFormat(dateFormat)
         }
         return null
     },
 
     /**
      * Uses a hard-coded date/time format to format the provided date. If no valid date is provided, null is returned.
-     * @param {(object|string)} date: the date to format, provided either as string or moment object. If a string is
-     * provided, that string needs to be parsable by moment
+     * @param {(object|string)} date: the date to format, provided either as string, Number or Luxon object. If a string 
+     * is provided, that string needs to be parsable by Luxon
+     * @param {string} dateTimeFormat - the Luxon datetime format, defaults to dd/MM/yy T
      * @returns {String} the formatted string or null, if the provided date string or object is not valid or cannot be
      * parsed.
      */
-    formatDateTime(date) {
-        return this.formatDate(date, DATE_TIME_FORMAT)
+    formatDateTime(date, dateTimeFormat = DATE_TIME_FORMAT) {
+        return this.formatDate(date, dateTimeFormat)
     },
 
     /**
@@ -166,13 +196,13 @@ const util = {
     },
 
     /**
-     * Applies an offset to a unix timestamp to allow native JS dates and moment to render the resulting date in the
+     * Applies an offset to a unix timestamp to allow native JS dates and Luxon to render the resulting date in the
      * server's timezone, rather than the browsers time zone. The idea is to convert all timestamps of a time series
      * received from a server in a different time into offset timestamps, which then allows to render the data as chart
      * or table using the server's time and not the users time.
      * @param {number} timestamp: the original timestamp in seconds since 1970
      * @param {number} serverOffsetMin: the number of minutes behind UTC (e.g. +10:00 is 600 minutes after UTC)
-     * @returns {number} the offset timestamp which when used by moment or as argument for new Date(..) will produce a
+     * @returns {number} the offset timestamp which when used by Luxon or as argument for new Date(..) will produce a
      * date / time string in the server's timezone rather than the users/browser timezone
      */
     applyTimeZoneOffset(timestamp, serverOffsetMin = 600) {
@@ -566,4 +596,4 @@ const util = {
     },
 }
 
-export default util
+export default qndUtils
