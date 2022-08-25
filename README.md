@@ -6,6 +6,8 @@ Little useful nuggets for accelerated web development.
 npm install --save quick-n-dirty-utils 
 ```
 
+**IMPORTANT: PLEASE READ THE [MIGRATION NOTES](https://github.com/ilfrich/quick-n-dirty-react/releases/tag/1.0.0) FOR VERSION 1.0.0+**
+
 **Table of Contents**
 
 1. [Functions](#functions)
