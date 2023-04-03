@@ -427,6 +427,18 @@ const qndUtils = {
     },
 
     /**
+     * Provides the mean value of the provided list
+     * @param {Array} list - a list of numbers
+     * @returns {Number} the average value of the values in the list
+     */
+    mean(list) {
+        if (list.length === 0) {
+            return 0
+        }
+        return this.sum(list) / list.length
+    },
+
+    /**
      * Extracts the query parameter of an URL query string and returns them as JSON object.
      * @param {string} query - the query string starting with ?, like ?foo=bar&abc=def
      * @returns {object} a JSON object with the key/value paris of the query string.
@@ -554,6 +566,47 @@ const qndUtils = {
     },
 
     /**
+     * Retrieves the last element of an array of the defaultValue, if the array is empty or not an array.
+     * @param {Array} array - an array of items
+     * @param {Object} defaultValue - the default value that will be returned if the provided array is empty or not an array.
+     * @returns {Object} the last element of the provided array or the default value
+     */
+    getLast(array, defaultValue = null) {
+        if (array == null || !Array.isArray(array) || array.length === 0) {
+            return defaultValue
+        }
+        return array[array.length - 1]
+    },
+
+    /**
+     * Finds out if an array of values occurs in another array of values. This is useful for filtering lists, which
+     * have multiple values for an attribute and you want the user to be able to filter by some of the values.
+     * @param {Array} values - a list of values that you want to check match some items in matchAgainst. If empty, 
+     * false will be returned
+     * @param {Array} matchAgainst - a list of selected filters. If the array is empty, false will be returned.
+     * @param {Number} minMatch - the number of items in matchAgainst that have to be in the values.
+     */
+    arrayMatch(values = [], matchAgainst = [], minMatch = 1) {
+        
+        return values.filter(val => matchAgainst.includes(val)).length >= minMatch
+    },
+
+    /**
+     * Will return the first element of an array that matches the provided filter function. If no element matches, null
+     * will be returned.
+     * @param {Array} array - an array of items
+     * @param {function} filterFunction - a function that will be applied to each item in the array.
+     * @returns {Object} the first element of the array that matches the filter function or null, if no element matches.
+     */
+    arraySearch(array, filterFunction) {
+        const filtered = array.filter(filterFunction)
+        if (filtered.length === 0) {
+            return null
+        }
+        return filtered[0]
+    },
+
+    /**
      * Adds or updates an item in a list of items and returns the updated list. This is useful for React state updates.
      * @param {Array} list - a list of items
      * @param {Object} item - a JSON object to be added to the list or updated, if it already exists
@@ -597,6 +650,16 @@ const qndUtils = {
         }
 
         return `rgb(${r}, ${g}, ${b})`
+    },
+
+    /**
+     * Returns all unique values in a list of values. All duplicates will be removed. This does not modify the original 
+     * list.
+     * @param {Array} values - a list of values
+     * @returns {Array} a list of unique values
+     */
+    uniqueValues(values) {
+        return [...new Set(values)]
     },
 }
 

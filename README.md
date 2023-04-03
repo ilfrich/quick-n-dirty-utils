@@ -6,7 +6,7 @@ Little useful nuggets for accelerated web development.
 npm install --save quick-n-dirty-utils 
 ```
 
-**IMPORTANT: PLEASE READ THE [MIGRATION NOTES](https://github.com/ilfrich/quick-n-dirty-utils/releases/tag/1.0.0) FOR VERSION 1.0.0+**
+*IMPORTANT: PLEASE READ THE [MIGRATION NOTES](https://github.com/ilfrich/quick-n-dirty-utils/releases/tag/1.0.0) FOR VERSION 1.0.0+*
 
 **Table of Contents**
 
@@ -140,7 +140,17 @@ Example:
 import { util } from "quick-n-dirty-utils"
 
 const list = [5, 3.5, 10]
-sum = util.sum(list)  // returns 18.5
+const sum = util.sum(list)  // returns 18.5
+```
+
+#### `mean(list)`
+This is just a short hand for summing up numeric values in an array and dividing by its length.
+
+Example
+```javascript
+import { util } from "quick-n-dirty-utils"
+const list = [3, 3, 6]
+const avg = util.mean(list)  // returns 4.0
 ```
 
 ### REST
@@ -654,4 +664,57 @@ const result3 = util.mapListToKeyObject(myList, item => item[level] + item[order
  *   ],   
  * }
  */
+```
+
+#### `getLast(array, defaultValue = null)`
+
+Retrieves the last element of an array or the provided `defaultValue`, in 
+ case the provided array is not an array or empty.
+
+```javascript
+import { util } from "quick-n-dirty-utils"
+
+const list = [0, 1, 2, 3, 4]
+console.log(getLast(list))  // will return 4
+```
+
+
+#### `arrayMatch(values, matchAgainst, minMatch = 1)`
+
+Finds out if an array of values occurs in another array of values. This is useful for filtering lists, which
+ have multiple values for an attribute and you want the user to be able to filter by some of the values.
+
+```javascript
+import { util } from "quick-n-dirty-utils"
+
+const items = [
+    { name: "Hello", tags: ["a"] },
+    { name: "World", tags: ["c"] },
+    { name: "Hello World", tags: ["a", "b"] },
+]
+let selectedTags = ["a", "b"]
+
+const active = items.filter(i => util.arrayMatch(i.tags, selectedTags))
+/* 
+ * will return:
+ * [{ name: "Hello", tags: ["a"] }, { name: "Hello World", tags: ["a", "b"] }]
+ */
+const twoActive = items.filter(i => util.arrayMatch(i.tags, selectedTags, 2))
+/* will return:
+ * [{ name: "Hello World", tags: ["a", "b"] }]
+ */
+```
+
+#### `arraySearch(values, filterFunction)`
+
+Finds the first match in a list of values that pass the `filterFunction` or `null` if no item in the list matches the
+function.
+
+```javascript
+import { util } from "quick-n-dirty-utils"
+
+const items = [0, 1, 2]
+const result1 = util.arraySearch(items, val => val === 2)  // returns 2
+const result2 = util.arraySearch(items, val => val === 3)  // returns null
+const result3 = util.arraySearch(items, val => val > 0)  // returns 1 (first match)
 ```
