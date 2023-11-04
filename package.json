@@ -1,6 +1,6 @@
 {
   "name": "quick-n-dirty-utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Little useful nuggets for accelerated web development",
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir ./dist",

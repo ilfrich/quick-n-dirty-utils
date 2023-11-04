@@ -53,7 +53,7 @@ const qndUtils = {
     formatDate(date, dateFormat = DATE_FORMAT) {
         // handling JS date objects
         if (date instanceof Date) {
-            return this.formatDate(DateTime.fromJSDate(date))
+            return this.formatDate(DateTime.fromJSDate(date), dateFormat)
         }
         // handling unix timestamps (guessing s or ms)
         if (typeof date === "number") {
