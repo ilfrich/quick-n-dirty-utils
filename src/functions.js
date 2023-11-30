@@ -189,9 +189,21 @@ const qndUtils = {
     restHandler(response) {
         return new Promise((resolve, reject) => {
             if (response.status >= 400) {
-                reject({
-                    status: response.status,
-                    message: response.text(),
+                response.text().then(responseContent => {
+                    try {
+                        // try to parse response into json
+                        const responseJson = JSON.parse(responseContent)
+                        reject({
+                            status: response.status,
+                            body: responseJson,
+                        })
+                    } catch (err) {
+                        // json parsing failed, just return as text
+                        reject({
+                            status: response.status,
+                            body: responseContent,
+                        })
+                    }
                 })
                 return
             }
