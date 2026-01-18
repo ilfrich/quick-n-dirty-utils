@@ -505,6 +505,40 @@ const items = [
 ...
 ```
 
+#### `groupObjects(objects, key = null, count = false)`
+
+Takes a list of objects and calls the provided key(obj) function on each obj in objects and stores the key in a JSON
+object with the value being either a list of all the values matching that key (count = false) or the number of values
+matching the key (if count = true).
+
+
+```javascript
+import { util } from "quick-n-dirty-utils"
+const objects = [{axis: "x", value: 5}, {axis: "x", value: 3}, {axis: "y", value: 17}]
+const grouped = util.groupObjects(objects, (obj) => obj.axis, true)
+// returns {x: 2, y: 1}
+const grouped = util.groupObjects(objects, (obj) => obj.axis, false)  // don't use count, but return values instead
+// returns {x: [{axis: "x", value: 5}, {axis: "x", value: 3}], y: [{axis: "y", value: 17}]}
+```
+
+#### `sortGrouping(grouping, reverse = true, countKey = "total", countExec = null)`
+
+Takes a grouping (see `groupObjects`), which is a JSON object with values either being numbers of arrays. The function
+will convert this JSON object in a list of JSON objects with keys "key", "value" and whatever is specified as `countKey`
+
+```javascript
+import { util } from "quick-n-dirty-utils"
+const objects = [{axis: "x", value: 5}, {axis: "x", value: 3}, {axis: "y", value: 17}]
+const grouping = util.groupObjects(objects, (obj) => obj.axis, false)  // returns { x: [..], y: [..] }
+
+// sort grouping by the sum of "value" values in each list of items in ascending order and store the sum as "total"
+const sorted = util.sortGrouping(grouping, true, "total", (items) => util.sum(items.map(i => i.value)))
+// returns [
+//      {key: "x", value: [{axis: "x", value: 5}, {axis: "x", value: 3}], "total": 8},
+//      {key: "y", value: [{axis: "y", value: 17}], "total": 17},
+// ]
+```
+
 ### Others
 
 #### `exportToJson(objectData, filename)`

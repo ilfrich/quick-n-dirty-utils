@@ -42,6 +42,9 @@ const qndUtils = {
         rejected: "_REJECTED",
     },
 
+    // sort directions (ASC / DESC)
+    SORT_DIRECTIONS,
+
     /**
      * Uses the hard-coded date format to format the provided date. If no valid date is provided, null is returned.
      * @param {(object|string)} date: the date to format, provided either as string or Luxon object. If a string is
@@ -593,13 +596,14 @@ const qndUtils = {
     /**
      * Finds out if an array of values occurs in another array of values. This is useful for filtering lists, which
      * have multiple values for an attribute and you want the user to be able to filter by some of the values.
-     * @param {Array} values - a list of values that you want to check match some items in matchAgainst. If empty, 
+     * @param {Array} values - a list of values that you want to check match some items in matchAgainst. If empty,
      * false will be returned
      * @param {Array} matchAgainst - a list of selected filters. If the array is empty, false will be returned.
      * @param {Number} minMatch - the number of items in matchAgainst that have to be in the values.
+     * @returns {boolean} a boolean indicating, whether enough items in values match against the list of matchAgainst,
+     * where "enough" is determined by the minMatch argument.
      */
     arrayMatch(values = [], matchAgainst = [], minMatch = 1) {
-        
         return values.filter(val => matchAgainst.includes(val)).length >= minMatch
     },
 
@@ -665,13 +669,71 @@ const qndUtils = {
     },
 
     /**
-     * Returns all unique values in a list of values. All duplicates will be removed. This does not modify the original 
+     * Returns all unique values in a list of values. All duplicates will be removed. This does not modify the original
      * list.
      * @param {Array} values - a list of values
      * @returns {Array} a list of unique values
      */
     uniqueValues(values) {
         return [...new Set(values)]
+    },
+
+    groupObjects(objects, key = null, count = false) {
+        /**
+         * Groups a list of items together by a key determined from the list item and supports counting items as well.
+         * @param {Array} objects - a list of values (either simple or complex objects)
+         * @param {function} key - an optional function that is used to determine the key from the item. If not
+         * provided, the entire item is used as key (this only works if the items contained in the list of objects are
+         * valid json keys)
+         * @param {boolean} count - a flag indicating whether to collect a list of items or the number of items (true)
+         * @returns {object} a json object with the keys as keys and the count (if count is true) or the list of values
+         * as values.
+         */
+        const result = {}
+        objects.forEach(item => {
+            const k = key == null ? item : key(item)
+            if (result[k] == null) {
+                result[k] = count ? 0 : []
+            }
+            if (count === true) {
+                result[k] += 1
+            } else {
+                result[k].push(item)
+            }
+        })
+        return result
+    },
+
+    sortGrouping(grouping, reverse = true, countKey = "total", countExec = null) {
+        /**
+         * Sorts a grouping by a counter/total value determined for each value of the input.
+         * @param {object} grouping - a json object with key > [values]
+         * @param {boolean} reverse - if true, the items will be sorted from highest to lowest (default).
+         * @param {str} countKey - the result will contain a list of json objects, with the countKey providing the json
+         * key used to store the total/counter value by which the list is sorted.
+         * @param {function} countExec - an optional lambda/function that is used to determine the counter value for
+         * each key. The countExec gets one parameter, which is the list of values for each key and the result needs to
+         * be numeric.
+         * @returns {Array} a list of json objects, where each object contains keys: "key" (storing the key from the
+         * grouping), "value" (storing the list of values underneath the key), "total" (or whatever is provided as
+         * countKey - storing either the length of the list of values, if countExec is null or the counter value
+         * determined by the countExec function)
+         */
+        const result = []
+        Object.keys(grouping).forEach(k => {
+            const v = grouping[k]
+            let count = v // default case, if values are numbers
+            if (Array.isArray(v)) {
+                // list provided, either measure the length or call the count exec function on the list
+                count = countExec == null ? v.length : countExec(v)
+            }
+            const resultItem = { key: k, value: v }
+            resultItem[countKey] = count
+            result.push(resultItem)
+        })
+
+        // sorting
+        return result.sort((a, b) => (reverse === true ? b[countKey] - a[countKey] : a[countKey] - b[countKey]))
     },
 }
 
