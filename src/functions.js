@@ -735,6 +735,23 @@ const qndUtils = {
         // sorting
         return result.sort((a, b) => (reverse === true ? b[countKey] - a[countKey] : a[countKey] - b[countKey]))
     },
+
+    getHumanFileSize(bytes, precision = 2) {
+        const extensions = ["B", "KB", "MB", "GB", "TB", "PB"]
+        if (Number.isNaN(bytes)) {
+            return bytes // we won't change anything to it
+        }
+
+        let value = bytes
+        let idx = 0
+
+        while (value > 1024 && idx < extensions.length - 1) {
+            value /= 1024
+            idx += 1
+        }
+
+        return `${value.toFixed(precision)} ${extensions[idx]}`
+    },
 }
 
 export default qndUtils
